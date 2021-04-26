@@ -11,11 +11,7 @@ export default {
   name: 'Ping',
   data() {
     return {
-<<<<<<< HEAD
       msg: '',
-=======
-      msg: 'Hello! Test',
->>>>>>> master
     };
   },
   methods: {
