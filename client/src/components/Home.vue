@@ -35,22 +35,28 @@ export default {
       alert(this.licenseplate);
     },
     getInfo() {
-    //   this.items.splice(0);
-      this.isHidden = true;
       const path = `https://opendata.rdw.nl/resource/m9d7-ebf2.json?kenteken=${this.licenseplate.toUpperCase()}`;
       axios.get(path)
         .then((res) => {
           this.items = res.data;
+          this.isHidden = true;
           console.log(res.data);
-          console.log(this.licenseplate);
         })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    getImages() {
+      const path = 'http://localhost:5000/';
+      axios.get(path)
+        .then(() => { })
         .catch((error) => {
           console.error(error);
         });
     },
   },
   created() {
-
+    this.getImages();
   },
 };
 </script>
