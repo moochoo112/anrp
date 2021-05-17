@@ -46,17 +46,9 @@ export default {
           console.error(error);
         });
     },
-    getImages() {
-      const path = 'http://localhost:5000/';
-      axios.get(path)
-        .then(() => { })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
   },
   created() {
-    this.getImages();
+
   },
 };
 </script>

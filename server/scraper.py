@@ -3,6 +3,8 @@ from selenium import webdriver
 from PIL import Image
 import operator
 import time
+import os
+
 
 #set options for the chrome driver that opens
 options = webdriver.ChromeOptions()
@@ -13,7 +15,7 @@ options.add_argument("--test-type")
 driver = webdriver.Chrome(options=options)
 
 #open the driver with the link to the site
-driver.get('https://www.youtube.com/watch?v=RTT8ia0nRQU&ab_channel=GeldersVerkeer')
+driver.get('https://www.youtube.com/watch?v=SDa35uUIUbc')
 
 #maximize window
 driver.maximize_window()
@@ -34,7 +36,7 @@ location = element.location
 def Make_Screenshot():
     #take screenshot
     size = element.size
-    driver.save_screenshot("screenshot.png")
+    driver.save_screenshot("data/images1/screenshot.png")
 
     #crop image
     x = location['x']
@@ -42,11 +44,15 @@ def Make_Screenshot():
     width = location['x']+size['width']
     height = location['y']+size['height']
     #open screenshot
-    im = Image.open('screenshot.png')
+    im = Image.open('data/images1/screenshot.png')
     #crop screenshot
     im = im.crop((int(x), int(y), int(width), int(height)))
     #save screenshot
-    im.save('screenshot.png')
+
+    im.save('data/images1/screenshot.png', 'PNG')
+    imagePath = 'screenshot.png'
+    os.system('py anpr.py --i data/images1/'+imagePath)
+    
 
 while True:
     Make_Screenshot()
