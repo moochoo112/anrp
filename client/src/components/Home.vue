@@ -111,6 +111,7 @@ export default {
       axios.get(path)
         .then((res) => {
           this.items = res.data;
+          console.log(this.items[0].kenteken);
           this.isHidden = true;
           console.log(res.data);
         })
