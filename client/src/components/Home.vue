@@ -69,11 +69,11 @@
             </tr>
             <tr>
               <th>Date</th>
-              <td>2 january 2021</td>
+              <td>{{ date }}</td>
             </tr>
             <tr>
               <th>Time</th>
-              <td>13:21</td>
+              <td>{{ time }}</td>
             </tr>
           </table>
         </div>
@@ -101,6 +101,8 @@ export default {
       licenseplate: '',
       fields: ['kenteken', 'eerste_kleur', 'tweede_kleur', 'kenteken', 'merk', 'handelsbenaming', 'voertuigsoort', 'inrichting', 'lengte', 'vervaldatum_apk'],
       items: null,
+      date: null,
+      time: null,
       isHidden: false,
       // eslint-disable-next-line global-require
       imageUrl: require('../assets/image-not-found.jpg'),
@@ -110,7 +112,7 @@ export default {
     checkImage(kenteken) {
       try {
         // eslint-disable-next-line global-require
-        this.imageUrl = require(`../../../server/data/images/${kenteken}.jpg`); // eslint-disable-line import/no-dynamic-require
+        this.imageUrl = require(`../../../server/image/${kenteken}.jpg`); // eslint-disable-line import/no-dynamic-require
       } catch (e) {
         // eslint-disable-next-line global-require
         this.imageUrl = require('../assets/image-not-found.jpg');
@@ -128,7 +130,23 @@ export default {
             this.items = res.data;
 
             this.checkImage(this.items[0].kenteken);
+            const payload = { kenteken: this.items[0].kenteken };
+            this.getImageInfo(payload);
           }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    getImageInfo(payload) {
+      const path = 'http://localhost:5000/';
+      axios.post(path, payload)
+        .then((res) => {
+          const splitData = res.data.split(' ');
+          const [, date, time] = splitData.filter((e) => e);
+          const [H, M] = time.split(':');
+          this.date = date;
+          this.time = `${H}:${M}`;
         })
         .catch((error) => {
           console.error(error);
