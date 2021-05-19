@@ -21,67 +21,69 @@
         <p>Information</p>
         <table v-if="items" style="width:100%">
           <tr>
-            <th>kenteken</th>
+            <th>Kenteken</th>
             <label >{{ items[0].kenteken }}</label>
           </tr>
           <tr>
-            <th>eerste_kleur</th>
+            <th>Eerste kleur</th>
             <td>{{ items[0].eerste_kleur }}</td>
           </tr>
           <tr>
-            <th>tweede_kleur</th>
+            <th>Tweede kleur</th>
             <td>{{ items[0].tweede_kleur }}</td>
           </tr>
           <tr>
-            <th>merk</th>
+            <th>Merk</th>
             <td>{{ items[0].merk }}</td>
           </tr>
            <tr>
-            <th>handelsbenaming</th>
+            <th>Handelsbenaming</th>
             <td>{{ items[0].handelsbenaming }}</td>
           </tr>
            <tr>
-            <th>voertuigsoort</th>
+            <th>Voertuigsoort</th>
             <td>{{ items[0].voertuigsoort }}</td>
           </tr>
            <tr>
-            <th>inrichting</th>
+            <th>Inrichting</th>
             <td>{{ items[0].inrichting }}</td>
           </tr>
            <tr>
-            <th>lengte</th>
+            <th>Lengte</th>
             <td>{{ items[0].lengte }}</td>
           </tr>
            <tr>
-            <th>vervaldatum_apk</th>
+            <th>Vervaldatum apk</th>
             <td>{{ items[0].vervaldatum_apk }}</td>
           </tr>
         </table>
       </div>
       <div class="information__photo">
         <p>Last seen</p>
-        <img src="https://static.autoblog.nl/images/wp2017/rijksweg-combo-31.jpg" alt="auto">
-        <table style="width:100%">
-          <tr>
-            <th>Location</th>
-            <td>Egmond</td>
-          </tr>
-          <tr>
-            <th>Date</th>
-            <td>2 january 2021</td>
-          </tr>
-          <tr>
-            <th>Time</th>
-            <td>13:21</td>
-          </tr>
-        </table>
+        <div v-if="items">
+          <img id="image" :src="imageUrl"/>
+          <table style="width:100%">
+            <tr>
+              <th>Location</th>
+              <td>Egmond</td>
+            </tr>
+            <tr>
+              <th>Date</th>
+              <td>{{ date }}</td>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <td>{{ time }}</td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div class="footer" toggleable="sm" type="light" variant="light">
-      <b-footer-text id="title">Full credits go to Kimberly van Gelder, Cheyen Alberts
-      & Jaap van Dalen 😉</b-footer-text>
-    </div>
+    <footer class="footer" toggleable="sm" type="light" variant="light">
+      <p id="title">Full credits go to Kimberly van Gelder, Cheyen Alberts
+      & Jaap van Dalen 😉</p>
+    </footer>
     <!-- </b-navbar> -->
 
   </div>
@@ -99,21 +101,52 @@ export default {
       licenseplate: '',
       fields: ['kenteken', 'eerste_kleur', 'tweede_kleur', 'kenteken', 'merk', 'handelsbenaming', 'voertuigsoort', 'inrichting', 'lengte', 'vervaldatum_apk'],
       items: null,
+      date: null,
+      time: null,
       isHidden: false,
+      // eslint-disable-next-line global-require
+      imageUrl: require('../assets/image-not-found.jpg'),
     };
   },
   methods: {
-    test() {
-      alert(this.licenseplate);
+    checkImage(kenteken) {
+      try {
+        // eslint-disable-next-line global-require
+        this.imageUrl = require(`../../../server/image/${kenteken}.jpg`); // eslint-disable-line import/no-dynamic-require
+      } catch (e) {
+        // eslint-disable-next-line global-require
+        this.imageUrl = require('../assets/image-not-found.jpg');
+      }
     },
     getInfo() {
       const path = `https://opendata.rdw.nl/resource/m9d7-ebf2.json?kenteken=${this.licenseplate.toUpperCase()}`;
       axios.get(path)
         .then((res) => {
-          this.items = res.data;
-          console.log(this.items[0].kenteken);
-          this.isHidden = true;
-          console.log(res.data);
+          if (res.data.length === 0) {
+            console.log('The data set is empty');
+            alert('There is no data found for this numberplate try again');
+            window.location.reload();
+          } else {
+            this.items = res.data;
+
+            this.checkImage(this.items[0].kenteken);
+            const payload = { kenteken: this.items[0].kenteken };
+            this.getImageInfo(payload);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    getImageInfo(payload) {
+      const path = 'http://localhost:5000/';
+      axios.post(path, payload)
+        .then((res) => {
+          const splitData = res.data.split(' ');
+          const [, date, time] = splitData.filter((e) => e);
+          const [H, M] = time.split(':');
+          this.date = date;
+          this.time = `${H}:${M}`;
         })
         .catch((error) => {
           console.error(error);
@@ -206,6 +239,7 @@ hr{
   background-color: #414141;
   height: 1px;
   margin-bottom: 0;
+  margin-top: 48px;
 }
 
 .information{
@@ -223,15 +257,25 @@ hr{
   padding-right: 64px;
   width: 50%;
 }
+.information__text p{
+  font-size: 32px;
+}
+.information__text table tr{
+  border-bottom: 1px solid #000;
+}
 .information__photo{
-  border-left: 2px solid #414141;
+  border-left: 2.5px solid #414141;
   color: #414141 !important;
   font-weight: 600;
   font-size: 20px;
-  margin-bottom: 16px;
   padding-left: 64px;
   padding-right: 64px;
   width: 50%;
+  height: 600.391px;
+  padding-bottom: 64px;
+}
+.information__photo p{
+  font-size: 32px;
 }
 .information__photo img{
   width: 100%;
@@ -242,12 +286,15 @@ hr{
 }
 
 .footer{
-  margin-top: 64px;
   margin-bottom: 0px;
   padding: 8px 64px;
   background-color: #f2f2f2;
   width: 100%;
   font-size: 24px;
   box-shadow: 0px -4px 16px #e0e0e0;
+  text-align:center;
+}
+.footer p{
+  margin-bottom: 0px;
 }
 </style>

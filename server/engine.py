@@ -3,6 +3,7 @@ import numpy as np
 import os
 import pathlib
 import csv 
+import datetime
 from csv import writer
 
 
@@ -304,13 +305,14 @@ def post_process(input_file_path):
             text = text.replace(punct, '')
 
     f.close()
-    List=[text]   
+    List=[text.strip(), datetime.datetime.now()]   
+    fieldnames = ['numberplate', 'dateTime']
     with open('number_plates.csv', 'a',newline='') as f_object:
   
         # Pass this file object to csv.writer()
         # and get a writer object
         writer_object = writer(f_object)
-    
+   
         # Pass the list as an argument into
         # the writerow()
         writer_object.writerow(List)
