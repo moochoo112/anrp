@@ -1,60 +1,46 @@
-#imports
-from selenium import webdriver
-from PIL import Image
-import operator
-import time
+import requests
+from bs4 import BeautifulSoup
+import cv2
+import numpy as np
+import urllib.request
 import os
 
 
-#set options for the chrome driver that opens
-options = webdriver.ChromeOptions()
-options.add_argument('--ignore-certificate-errors')
-options.add_argument("--test-type")
+#working with insecam url
+insecam = "insecam"
+prvgld = "prvgld"
 
-#find driver
-driver = webdriver.Chrome(options=options)
-
-#open the driver with the link to the site
-driver.get('https://www.youtube.com/watch?v=SDa35uUIUbc')
-
-#maximize window
-driver.maximize_window()
-
-#agree to cookies 
-element = driver.find_element_by_xpath("//button[@jscontroller='soHxf']")
-element.click()
-
-#wait for the video to load
-time.sleep(3)
+urlList = ["http://www.insecam.org/en/view/711940/", "http://www.insecam.org/en/view/845501/", "http://www.insecam.org/en/view/854253/"]
 
 
-#locate the video
-element = driver.find_element_by_xpath("//video[@class='video-stream html5-main-video']")
-location = element.location
+#define headers
+#we do this to trick websites into thinking we are real users
+headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36'}
 
-#function to make the screenshot
-def Make_Screenshot():
-    #take screenshot
-    size = element.size
-    driver.save_screenshot("data/images1/screenshot.png")
 
-    #crop image
-    x = location['x']
-    y = location['y']
-    width = location['x']+size['width']
-    height = location['y']+size['height']
-    #open screenshot
-    im = Image.open('data/images1/screenshot.png')
-    #crop screenshot
-    im = im.crop((int(x), int(y), int(width), int(height)))
-    #save screenshot
+def url_to_image(url):
+	response = urllib.request.urlopen(url)
+	image = np.asarray(bytearray(response.read()), dtype="uint8")
+	image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+	return image
 
-    im.save('data/images1/screenshot.png', 'PNG')
-    imagePath = 'screenshot.png'
-    os.system('py anpr.py --i data/images1/'+imagePath)
-    
+def get_image_url_from_page(url):
+	#load the webpage and add the header as header
+	response = requests.get(urlList[0], headers=headers)
+	response.request.headers
+	{'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36', 'Accept-Encoding': 'gzip, deflate', 		 'Accept': '*/*'}
+
+	soupPage = BeautifulSoup(response.text, "html.parser")
+
+	if(insecam in url):
+		imageElement = soupPage.find("img", {'id':'image0'})
+	if(prvgld in url):
+		imageElement = soupPage.find("div", {'class':'html5-video-container'})
+	return imageElement['src']
 
 while True:
-    Make_Screenshot()
-
-driver.quit()
+    for url in urlList:
+        imageUrl = get_image_url_from_page(url)
+        image = url_to_image(imageUrl)
+        cv2.imwrite('data/images1/screenshot.png', image)
+        os.system('py anpr.py --i data/images1/screenshot.png')

@@ -32,7 +32,7 @@ if args.i:
     for crop in crops:
 
         crop = process(crop)
-
+        
         cv2.imwrite('image/crop' + str(i) + '.jpg', crop)
         recognise('image/crop' + str(i) + '.jpg', 'image/crop'+str(i))
         number_plate = post_process('image/crop' + str(i) + '.txt')
