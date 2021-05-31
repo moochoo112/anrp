@@ -10,7 +10,7 @@ import os
 insecam = "insecam"
 prvgld = "prvgld"
 
-urlList = ["http://www.insecam.org/en/view/711940/", "http://www.insecam.org/en/view/845501/", "http://www.insecam.org/en/view/854253/"]
+urlList = ["http://www.insecam.org/en/view/854253/"]
 
 
 #define headers
@@ -42,5 +42,6 @@ while True:
     for url in urlList:
         imageUrl = get_image_url_from_page(url)
         image = url_to_image(imageUrl)
+        print(url)
         cv2.imwrite('data/images1/screenshot.png', image)
         os.system('py anpr.py --i data/images1/screenshot.png')

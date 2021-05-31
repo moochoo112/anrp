@@ -65,7 +65,7 @@
           <table style="width:100%">
             <tr>
               <th>Location</th>
-              <td>Egmond</td>
+              <td>{{ location }}</td>
             </tr>
             <tr>
               <th>Date</th>
@@ -76,6 +76,7 @@
               <td>{{ time }}</td>
             </tr>
           </table>
+          <button type="button" class="downloadbtn" @click="download">Download PDF</button>
         </div>
       </div>
     </div>
@@ -91,6 +92,9 @@
 
 <script>
 import axios from 'axios';
+import JSPDF from 'jspdf';
+
+const doc = new JSPDF();
 
 export default {
   components: {
@@ -103,12 +107,30 @@ export default {
       items: null,
       date: null,
       time: null,
+      location: null,
       isHidden: false,
       // eslint-disable-next-line global-require
       imageUrl: require('../assets/image-not-found.jpg'),
     };
   },
   methods: {
+    download() {
+      doc.text(20, 20, `Kenteken: ${this.items[0].kenteken}`);
+      doc.text(20, 30, `First colour: ${this.items[0].eerste_kleur}`);
+      doc.text(20, 40, `Second colour: ${this.items[0].tweede_kleur}`);
+      doc.text(20, 50, `Brand: ${this.items[0].merk}`);
+      doc.text(20, 60, `Trade name: ${this.items[0].handelsbenaming}`);
+      doc.text(20, 70, `Vehicle type: ${this.items[0].voertuigsoort}`);
+      doc.text(20, 80, `Design: ${this.items[0].inrichting}`);
+      doc.text(20, 90, `Length: ${this.items[0].lengte}`);
+      doc.text(20, 100, `Expiration APK: ${this.items[0].vervaldatum_apk}`);
+      doc.addPage();
+      doc.addImage(this.imageUrl, 'JPEG', 15, 40, 180, 140);
+      doc.text(20, 200, `Date: ${this.date}`);
+      doc.text(20, 210, `Time: ${this.time}`);
+      doc.text(20, 220, `Location: ${this.location}`);
+      doc.save('information.pdf');
+    },
     checkImage(kenteken) {
       try {
         // eslint-disable-next-line global-require
@@ -200,12 +222,20 @@ export default {
 .btn{
   background-color: #2292AB;
   float: center;
-  font-size: 1.5vw;
   border: none;
   font-size: 32px;
   font-weight: 600;
 }
-.btn:hover{
+.downloadbtn{
+  background-color: #2292AB;
+  float: right;
+  border: none;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  border-radius: 4px;
+}
+.btn:hover, .downloadbtn:hover{
   background-color: #1c788c;
 }
 .table{

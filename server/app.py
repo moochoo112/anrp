@@ -21,13 +21,12 @@ def get_image_info():
     csv=pd.read_csv('number_plates.csv',',', header=None)
     date = csv[csv[0] == plateNumber][1]
     date = date.to_string()
-    # print(type(date))
     return date
 
 def main():
     os.system('py -m scraper.py')
 
 if __name__ == '__main__':
-    main()
+    # main()
     app.run()
     
