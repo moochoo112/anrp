@@ -28,6 +28,6 @@ def main():
     os.system('py -m scraper.py')
 
 if __name__ == '__main__':
-    # main()
+    main()
     app.run()
     
