@@ -164,11 +164,12 @@ export default {
       const path = 'http://localhost:5000/';
       axios.post(path, payload)
         .then((res) => {
-          const splitData = res.data.split(' ');
+          const splitData = res.data[0].split(' ');
           const [, date, time] = splitData.filter((e) => e);
           const [H, M] = time.split(':');
           this.date = date;
           this.time = `${H}:${M}`;
+          [, this.location] = res.data[1].split(' ');
         })
         .catch((error) => {
           console.error(error);

@@ -19,9 +19,22 @@ def get_image_info():
     post_data = request.get_json()
     plateNumber = post_data.get('kenteken')
     csv=pd.read_csv('number_plates.csv',',', header=None)
-    date = csv[csv[0] == plateNumber][1]
+    #reverse the data.
+    reversedCsv = csv[::-1].reset_index()
+
+    #create a list of data
+    data = []
+
+    date = reversedCsv[reversedCsv[0] == plateNumber][1]
     date = date.to_string()
-    return date
+    data.append(date)
+    location=""
+    try:
+        location = reversedCsv[reversedCsv[0] == plateNumber][2].to_string()
+    except:
+        location = "No Location"
+    data.append(" ".join(location.split()))
+    return jsonify(data)
 
 def main():
     os.system('py -m scraper.py')

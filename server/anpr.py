@@ -9,12 +9,12 @@ import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--i', '-image', help="Input image path", type= str)
+parser.add_argument('--l', '-location', help="Input image location", type= str)
 parser.add_argument('--v', '-video', help="Input video path", type= str)
 
 
 args = parser.parse_args()
 abs_path = os.path.dirname(sys.executable)
-
 
 if args.i:
     start = time.time()
@@ -35,7 +35,7 @@ if args.i:
         
         cv2.imwrite('image/crop' + str(i) + '.jpg', crop)
         recognise('image/crop' + str(i) + '.jpg', 'image/crop'+str(i))
-        number_plate = post_process('image/crop' + str(i) + '.txt')
+        number_plate = post_process('image/crop' + str(i) + '.txt', args.l)
         i += 1
     cv2.imwrite('image/' + number_plate.rstrip() + '.jpg', detection)
     finish = time.time()

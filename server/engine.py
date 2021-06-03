@@ -286,7 +286,7 @@ def process(src):
     return th
 
 
-def post_process(input_file_path):
+def post_process(input_file_path, location):
     f = open(input_file_path, "r")
     text = f.readline()
     puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']', '>', '%', '=',
@@ -305,7 +305,7 @@ def post_process(input_file_path):
             text = text.replace(punct, '')
 
     f.close()
-    List=[text.strip(), datetime.datetime.now()]   
+    List=[text.strip(), datetime.datetime.now(), location]   
     fieldnames = ['numberplate', 'dateTime']
     with open('number_plates.csv', 'a',newline='') as f_object:
   

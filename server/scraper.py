@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import urllib.request
 import os
+import re
 
 
 #working with insecam url
@@ -12,11 +13,9 @@ prvgld = "prvgld"
 
 urlList = ["http://www.insecam.org/en/view/854253/"]
 
-
 #define headers
 #we do this to trick websites into thinking we are real users
 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36'}
-
 
 def url_to_image(url):
 	response = urllib.request.urlopen(url)
@@ -34,14 +33,20 @@ def get_image_url_from_page(url):
 
 	if(insecam in url):
 		imageElement = soupPage.find("img", {'id':'image0'})
-	if(prvgld in url):
-		imageElement = soupPage.find("div", {'class':'html5-video-container'})
-	return imageElement['src']
+		detailCells = soupPage.find_all("a", {'class': 'camera-details__link'})
+		for detailCell in detailCells:
+			if "View online network cameras in" in detailCell['title']:
+				tempLoc = detailCell['title']
+				location = tempLoc.replace("View online network cameras in",'')
 
-while True:
-    for url in urlList:
-        imageUrl = get_image_url_from_page(url)
-        image = url_to_image(imageUrl)
-        print(url)
-        cv2.imwrite('data/images1/screenshot.png', image)
-        os.system('py anpr.py --i data/images1/screenshot.png')
+	
+	return [imageElement['src'], location]
+
+# while True:
+for url in urlList:
+	imageUrl, location = get_image_url_from_page(url)
+	image = url_to_image(imageUrl)
+	cv2.imwrite('data/images1/screenshot.png', image)
+	if not location: 
+		location="No Location"
+	os.system('py anpr.py --i data/images1/screenshot.png --l '+ location)
