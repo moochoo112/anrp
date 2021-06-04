@@ -42,11 +42,11 @@ def get_image_url_from_page(url):
 	
 	return [imageElement['src'], location]
 
-# while True:
-for url in urlList:
-	imageUrl, location = get_image_url_from_page(url)
-	image = url_to_image(imageUrl)
-	cv2.imwrite('data/images1/screenshot.png', image)
-	if not location: 
-		location="No Location"
-	os.system('py anpr.py --i data/images1/screenshot.png --l '+ location)
+while True:
+	for url in urlList:
+		imageUrl, location = get_image_url_from_page(url)
+		image = url_to_image(imageUrl)
+		cv2.imwrite('data/images1/screenshot.png', image)
+		if not location: 
+			location="No Location"
+		os.system('py anpr.py --i data/images1/screenshot.png --l '+ location)
