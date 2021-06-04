@@ -21,39 +21,39 @@
         <p>Information</p>
         <table v-if="items" style="width:100%">
           <tr>
-            <th>Kenteken</th>
+            <th>License Plate</th>
             <label >{{ items[0].kenteken }}</label>
           </tr>
           <tr>
-            <th>Eerste kleur</th>
+            <th>First colour</th>
             <td>{{ items[0].eerste_kleur }}</td>
           </tr>
           <tr>
-            <th>Tweede kleur</th>
+            <th>Second colour</th>
             <td>{{ items[0].tweede_kleur }}</td>
           </tr>
           <tr>
-            <th>Merk</th>
+            <th>Brand</th>
             <td>{{ items[0].merk }}</td>
           </tr>
            <tr>
-            <th>Handelsbenaming</th>
+            <th>Trade name</th>
             <td>{{ items[0].handelsbenaming }}</td>
           </tr>
            <tr>
-            <th>Voertuigsoort</th>
+            <th>Vehicle type</th>
             <td>{{ items[0].voertuigsoort }}</td>
           </tr>
            <tr>
-            <th>Inrichting</th>
+            <th>Design</th>
             <td>{{ items[0].inrichting }}</td>
           </tr>
            <tr>
-            <th>Lengte</th>
+            <th>Length</th>
             <td>{{ items[0].lengte }}</td>
           </tr>
            <tr>
-            <th>Vervaldatum apk</th>
+            <th>Expiration APK</th>
             <td>{{ items[0].vervaldatum_apk }}</td>
           </tr>
         </table>
@@ -115,7 +115,7 @@ export default {
   },
   methods: {
     download() {
-      doc.text(20, 20, `Kenteken: ${this.items[0].kenteken}`);
+      doc.text(20, 20, `License Plate: ${this.items[0].kenteken}`);
       doc.text(20, 30, `First colour: ${this.items[0].eerste_kleur}`);
       doc.text(20, 40, `Second colour: ${this.items[0].tweede_kleur}`);
       doc.text(20, 50, `Brand: ${this.items[0].merk}`);

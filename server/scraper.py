@@ -11,7 +11,7 @@ import re
 insecam = "insecam"
 prvgld = "prvgld"
 
-urlList = ["http://www.insecam.org/en/view/711940/"]
+urlList = ["http://www.insecam.org/en/view/854253/"]
 
 #define headers
 #we do this to trick websites into thinking we are real users
